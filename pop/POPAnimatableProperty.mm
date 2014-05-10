@@ -14,6 +14,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 #import <POP/POPLayerExtras.h>
+#import "POPPropertyAnimationInternal.h"
 
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
@@ -95,8 +96,11 @@ NSString * const kPOPToolbarBarTintColor = kPOPNavigationBarBarTintColor;
 // UITabBar
 NSString * const kPOPTabBarBarTintColor = kPOPNavigationBarBarTintColor;
 
-//UILabel
+// UILabel
 NSString * const kPOPLabelTextColor = @"label.textColor";
+
+// POPAnimation
+NSString * const kPOPPropertyAnimationToValue = @"propertyAnimation.toValue";
 
 /**
  State structure internal to static animatable property.
@@ -441,6 +445,22 @@ static POPStaticAnimatablePropertyState _staticStates[] =
       obj.constant = values[0];
     },
     0.01
+  },
+    
+  /* POPPropertyAnimation*/
+  {kPOPPropertyAnimationToValue,
+    ^(POPPropertyAnimation *obj, CGFloat values[]) {
+      POPPropertyAnimationState *ps = dynamic_cast<POPPropertyAnimationState*>(POPAnimationGetState(obj));
+      
+      memcpy(values, ps->toVec->data(), ps->valueCount*sizeof(CGFloat));
+    },
+    ^(POPPropertyAnimation *obj, const CGFloat values[]) {
+      POPPropertyAnimationState *ps = dynamic_cast<POPPropertyAnimationState*>(POPAnimationGetState(obj));
+      VectorRef vec = VectorRef(Vector::new_vector(4, values));
+      
+      obj.toValue = POPBox(vec, ps->valueType, false);
+    },
+    kPOPThresholdOpacity
   },
 
 #if TARGET_OS_IPHONE

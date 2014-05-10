@@ -176,4 +176,9 @@ extern NSString * const kPOPTabBarBarTintColor;
  */
 extern NSString * const kPOPLabelTextColor;
 
+/**
+ Common POPPropertyAnimation property names
+ */
+extern NSString * const kPOPPropertyAnimationToValue;
+
 #endif
